@@ -1,4 +1,9 @@
 module.exports = require('yargs')
+    .option('assertion-timeout', {
+        default: 3000,
+        describe: 'Amount of time (milliseconds), within which TestCafe makes attempts to successfully execute an assertion if a selector property or a client function was passed as an actual value',
+        type: 'integer'
+    })
     .option('browsers', {
         alias: 'b',
         default: ['chrome:headless'],
@@ -27,6 +32,11 @@ module.exports = require('yargs')
         default: true,
         describe: 'Take screenshots whenever test fails',
         type: 'boolean'
+    })
+    .option('selector-timeout', {
+        default: 10000,
+        describe: 'Amount of time (milliseconds), within which selectors make attempts to obtain a node to be returned',
+        type: 'integer'
     })
     .option('specs', {
         alias: 's',

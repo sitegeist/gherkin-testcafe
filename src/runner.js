@@ -8,6 +8,8 @@ module.exports = async function main({
     screenshots,
     screenshotsOnFail,
     test,
+    assertionTimeout = 3000,
+    selectorTimeout = 10000,
     ports
 }) {
     const testcafe = await createTestCafe(hostname, ...ports.slice(0, 2));
@@ -24,7 +26,6 @@ module.exports = async function main({
         }
 
         if (test && !fixture) {
-            // Try to match a scenario with the given test name
             runner.filter((testName, fixtureName, fixturePath) => {
                 return testName === `Scenario: ${test}`;
             });
@@ -43,7 +44,10 @@ module.exports = async function main({
             });
         }
 
-        const failedCount = await runner.run();
+        const failedCount = await runner.run({
+            assertionTimeout: assertionTimeout,
+            selectorTimeout: selectorTimeout
+        });
 
         process.exit(failedCount && 1);
     } catch (error) {
