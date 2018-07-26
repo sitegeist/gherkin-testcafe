@@ -19,7 +19,7 @@ Currently, this tool is still under development and very likely to break.
 ## Why?
 
 [DevExpress](https://github.com/DevExpress)' [testcafe](http://devexpress.github.io/testcafe/) is an amazing tool for writing acceptance tests. Unfortunately it currently lacks support for
-BDD-style tests using the famous [gherkin](https://github.com/cucumber/cucumber/wiki/Gherkin) Syntax (Although there seem to be [plans for future support](https://github.com/DevExpress/testcafe/issues/1373#issuecomment-291526857)).
+BDD-style tests using the famous [gherkin](https://github.com/cucumber/cucumber/wiki/Gherkin) Syntax (Although there seem to be [plans for future support](https://github.com/DevExpress/testcafe/issues/1373#issuecomment-291526857)). 
 
 This tool provides a setup in which gherkin `*.feature` specs can be used to run testcafe tests.
 
@@ -56,13 +56,25 @@ gherkin-testcafe --specs ./tests/**/*.feature --steps ./tests/**/*.js --browers 
 
 ### Supported Parameters
 
-`--specs [list of file patterns]` - One or more paths or glob patterns to the `*.feature` files to be tested.
+`--specs | -s [list of file patterns]` - One or more paths or glob patterns to the `*.feature` files to be tested.
 
-`--steps [list of file patterns]` - One or more paths or glob patterns to the `*.js` files containing the step definitions.
+`--steps | -d [list of file patterns]` - One or more paths or glob patterns to the `*.js` files containing the step definitions.
 
-`--browsers` - A space-separated list of browsers to run the tests in (see [Testcafe Browser Support](http://devexpress.github.io/testcafe/documentation/using-testcafe/common-concepts/browsers/browser-support.html#locally-installed-browsers))
+`--browsers | -b` - A space-separated list of browsers to run the tests in (see [Testcafe Browser Support](http://devexpress.github.io/testcafe/documentation/using-testcafe/common-concepts/browsers/browser-support.html#locally-installed-browsers)) `default: chrome:headless`
 
-`--ports` - Up to 2 ports that will be used by testcafe to serve tested webpages
+`--ports | -p` - Up to 2 ports that will be used by testcafe to serve tested webpages `default: [1337, 1338]`
+
+`--skipJsErrors | -e ` - Make tests not fail when a JS error happens on a page `default: false`
+
+`--disablePageReloads` - Disable page reloads between tests `default: false`
+
+`--quarantineMode | -q` - Enable the quarantine mode `default: false`
+
+`--debugMode` - Execute test steps one by one pausing the test after each step `default: false`
+
+`--debugOnFail` - Pause the test if it fails `default: false`
+
+`--speed` - Set the speed of test execution (0.01 ... 1) `default: 1`
 
 ## Usage with docker
 
