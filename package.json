@@ -1,10 +1,13 @@
 {
   "name": "gherkin-testcafe",
-  "version": "1.0.2",
-  "author": "Wilhelm Behncke <behncke@sitegeist.de>",
+  "version": "1.1.0",
+  "author": "Lukas Kullmann <lukas.kullmann@kiwigrid.com>",
+  "contributors": [
+    "Wilhelm Behncke <behncke@sitegeist.de>"
+  ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/sitegeist/gherkin-testcafe"
+    "url": "https://github.com/kiwigrid/gherkin-testcafe"
   },
   "license": "MIT",
   "keywords": [
@@ -20,11 +23,21 @@
   "bin": {
     "gherkin-testcafe": "./main.js"
   },
+  "main": "src/createTestcafeGherkin.js",
   "dependencies": {
-    "cucumber-expressions": "^5.0.7",
+    "async-exit-hook": "^2.0.1",
+    "endpoint-utils": "^1.0.2",
     "gherkin": "^5.0.0",
     "glob": "^7.1.2",
-    "testcafe": "^0.18.5",
+    "stack-chain": "^2.0.0",
     "yargs": "^10.0.3"
+  },
+  "peerDependencies": {
+    "cucumber": "^4.2.1",
+    "testcafe": "^0.20.0"
+  },
+  "devDependencies": {
+    "cucumber": "^4.2.1",
+    "testcafe": "^0.20.0"
   }
 }

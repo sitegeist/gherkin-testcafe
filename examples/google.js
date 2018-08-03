@@ -1,23 +1,31 @@
-const {Selector} = require('testcafe');
+const { Given, When, Then, Before } = require('cucumber');
+const { Selector: NativeSelector } = require('testcafe');
 
-module.exports = function defineSteps({given, when, then}) {
-	given(`I am open Google's search page`, t => {
-		return t.navigateTo('http://www.google.com');
-	});
+const Selector = (input, t) => {
+	return NativeSelector(input).with({ boundTestRun: t });
+};
 
-	when(`I am typing my search request {string} on Google`, (t, searchRequest) => {
-		const input = Selector('#lst-ib');
+Before('@googleHook', async () => {
+    console.log('Running Google e2e test.');
+});
 
-        return t.typeText(input, searchRequest);
-	});
+Given(/^I am open Google's search page$/, async t => {
+	await t.navigateTo('http://www.google.com');
+});
 
-	then(`I am pressing {string} key on Google`, (t, key) => {
-		return t.pressKey(key);
-	});
+When(/^I am typing my search request "(.+)" on Google$/, async (t, searchRequest) => {
+	const input = Selector('#lst-ib', t);
 
-	then(`I should see that the first Google's result is {string}`, (t, expectedSearchResult) => {
-		const firstLink = Selector('#rso').find('a');
+	await t.typeText(input, searchRequest);
+});
 
-        return t.expect(firstLink.innerText).contains(expectedSearchResult);
-	});
-}
+When(/I am pressing "(.+)" key on Google/, async (t, key) => {
+	await t.pressKey(key);
+});
+
+Then(/I should see that the first Google's result is "(.+)"/, async (t, expectedSearchResult) => {
+	const firstLink = Selector('#rso', t).find('a');
+
+	await t.expect(firstLink.innerText).contains(expectedSearchResult);
+	console.log('testing stuff');
+});

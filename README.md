@@ -2,12 +2,10 @@
 
 > Run testcafe tests with gherkin syntax
 
-### Authors & Sponsors
+### Authors
 
-* Wilhelm Behncke - behncke@sitegeist.de
-
-*The development and the public-releases of this package is generously sponsored
-by our employer http://www.sitegeist.de.*
+* Wilhelm Behncke - behncke@sitegeist.de (original author)
+* Lukas Kullmann
 
 This package is inspired by [helen-dikareva/testcafe-cucumber-demo](https://github.com/helen-dikareva/testcafe-cucumber-demo).
 The test example for the google search is taken from there.
@@ -25,9 +23,11 @@ This tool provides a setup in which gherkin `*.feature` specs can be used to run
 
 ## What does this do?
 
-The tool itself has just a small footprint to glue testcafe and gherkin together.
+The tool glues testcafe and gherkin together.
 
 It uses testcafe as the testrunner and constructs the `fixture` and `test` calls from gherkin sources during runtime.
+
+Since this tool digs deep into the internals of testcafe to run the feature files, it should only be used together with the testcafe version specified in the peer dependencies of this package.
 
 To interpret `*.feature` files written in gherkin, it uses the `gherkin` package from npm. To allow custom step definitions it uses the `cucumber-expressions` package from npm. Both of those packages are provided by the cucumber project.
 
@@ -87,27 +87,73 @@ All parameters of the command line interface can be used, but the the list of br
 - firefox
 - "chromium --no-sandbox"
 
-## Writing step definitions
+## Programming Interface
 
-With the `--steps` parameter you can specify where to find your step definitions. These are contained in a file of the following form:
+Similarly to testcafe itself, this extension can be use a programming interface for fine-grained control over the test run.
+Most parts of the workflow stay the same.
+You only not import `testcafe`, you import `gherkin-testcafe`:
 
-```js
-module.exports = function defineSteps({given, when, then}) {
-	given(`I have a step definition with parameter {string}`, (t, myParameter) => {
-		// Test implementation here
-	});
-}
+```diff
+- const createTestCafe = require('testcafe');
++ const createTestCafe = require('gherkin-testcafe');
 ```
 
-`given`, `when` and `then` refer to their gherkin counterparts. Each of these functions takes two parameters.
+And for the runner instance, you do not add files (via the `src` method), you add `specs` and `steps`:
 
-The first one expects a parameterized step expression. You'll find more on that in the [cucumber-expressions Documentation](https://github.com/cucumber/cucumber/tree/master/cucumber-expressions#cucumber-expressions).
+```diff
+  runner
+-     .src('tests/myFixture.js')
++     .specs('./specs/**/*.feature')
++     .steps('./specs/**/*.js')
+      .browsers([remoteConnection, 'chrome'])
+      .reporter('json')
+      .run()
+      .then(failedCount => {
+          /* ... */
+      })
+      .catch(error => {
+          /* ... */
+      });
+```
 
-The second one expects a function (that is allowed to be be `async`), which executes the actual test. That function
-will get the testcafe test controller as its first parameter (`t` in the example). With that you can use the entirety
-of test cafes [Test API](http://devexpress.github.io/testcafe/documentation/test-api/).
+You can add multiple spec and step paths by either passing an array to `specs` and `steps` or by calling these methods multiple times.
 
-All subsequent parameters for the test function are resolved from the given step expression.
+```js
+runner
+    .specs(['./one-path/**/*.feature', './other-path/**/*.feature'])
+    
+// or
+
+runner
+    .specs('./one-path/**/*.feature')
+    .specs('./other-path/**/*.feature')
+```  
+  
+All functionality of the main testcafe programming interface is proxied to this implementation.
+          
+Refer to the [testcafe programming interface help page](https://devexpress.github.io/testcafe/documentation/using-testcafe/programming-interface/) for more information about other parameters.
+
+## Writing step definitions
+
+With the `--steps` parameter you can specify where to find your step definitions.
+Step definitions are written with [cucumber-js](https://github.com/cucumber/cucumber-js) with a little tweak of the input parameters.
+
+```js
+const { Given } = require('cucumber');
+
+Given(/^I have a step definition with parameter (.+) and another parameter (.+)$/, async (t, param1, param2) => {
+    // Test implementation here
+});
+```
+
+Refer to the [API reference](https://github.com/cucumber/cucumber-js/blob/master/docs/support_files/api_reference.md) for more information on how to set up step definitions.
+
+In contrast to `cucumber-js`, the first parameter of the step implementation is testcafe's test controller.
+All other arguments will be the values of the regular expression's captured parentheses.
+
+## Hooks
+If you want to use hooks, please refer to the [documentation](https://github.com/cucumber/cucumber-js/blob/master/docs/support_files/hooks.md) of the Cucumber-js. Also, please note that multiple tags per hook definition are not supported.
+
 
 ## License
 
