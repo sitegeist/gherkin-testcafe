@@ -1,6 +1,16 @@
-# gherkin-testcafe
+# [DEPRECATED] gherkin-testcafe
 
 > Run testcafe tests with gherkin syntax
+
+-----------------------------------------------------
+# DEPRECATION NOTICE:
+
+**Maintenance of this package has been moved to: https://github.com/kiwigrid/gherkin-testcafe**
+
+Thank you very much @Lukas-Kullmann for being so kind to take care of this package :heart:
+
+-----------------------------------------------------
+
 
 ### Authors & Sponsors
 
